@@ -93,7 +93,7 @@ export default function StoreDetailsPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       <PageHeader
         title={store?.name || "Store"}
         subtitle={store?.location || "—"}

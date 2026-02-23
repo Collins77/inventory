@@ -123,10 +123,10 @@ export default function DashboardPage() {
                 <SelectTrigger className="h-9 rounded-2xl">
                   <SelectValue placeholder="Scope" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All stores</SelectItem>
+                <SelectContent >
+                  <SelectItem value="all" >All stores</SelectItem>
                   {stores.map((s) => (
-                    <SelectItem key={s.id} value={s.id}>
+                    <SelectItem className="" key={s.id} value={s.id}>
                       {s.name}
                     </SelectItem>
                   ))}

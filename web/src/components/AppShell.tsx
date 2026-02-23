@@ -29,7 +29,6 @@ function SideNav({ onNavigate }: { onNavigate?: () => void }) {
       {item("/", "Dashboard", LayoutDashboard)}
       {item("/stores", "Stores", Store)}
       {item("/products", "Products", Boxes)}
-      {item("/about", "About", Package)}
     </div>
   );
 }
@@ -37,7 +36,7 @@ function SideNav({ onNavigate }: { onNavigate?: () => void }) {
 export default function AppShell() {
   return (
     <div className="min-h-dvh bg-background">
-      <div className="mx-auto max-w-6xl p-4">
+      <div className="w-full px-6 py-4">
         <header className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
@@ -73,7 +72,7 @@ export default function AppShell() {
             </div>
           </aside>
 
-          <main className="rounded-2xl border bg-card p-4 shadow-sm">
+          <main className="min-w-0 rounded-2xl border bg-card p-4 shadow-sm ">
             <Outlet />
           </main>
         </div>

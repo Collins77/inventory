@@ -26,7 +26,6 @@ export default function StoresPage() {
     setLoading(true);
     try {
       const data = await listStores();
-      console.log(data);
       setStores(data);
     } finally {
       setLoading(false);
@@ -58,7 +57,7 @@ export default function StoresPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       <PageHeader
         title="Stores"
         subtitle="Create and manage stores."

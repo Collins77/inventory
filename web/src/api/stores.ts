@@ -3,7 +3,6 @@ import type { Store } from "./types";
 
 export async function listStores() {
   const res = await api.get<{ data: Store[] }>("/stores");
-  console.log(res.data)
   return res.data.data;
 }
 
