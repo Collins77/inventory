@@ -8,6 +8,8 @@ services:
       - ./server/.env
     ports:
       - "4000:4000"
+    volumes:
+      - db-data:/app/data
     restart: unless-stopped
 
   web:
@@ -22,3 +24,6 @@ services:
     depends_on:
       - server
     restart: unless-stopped
+
+volumes:
+  db-data:

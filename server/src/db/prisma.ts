@@ -1,8 +1,9 @@
 import "dotenv/config";
 import { PrismaClient } from "../generated/prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 
-const adapter = new PrismaLibSql({
+// Create the adapter
+const adapter = new PrismaBetterSqlite3({
   url: process.env.DATABASE_URL!,
 });
 
