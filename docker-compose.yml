@@ -1,0 +1,24 @@
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: inventory_server
+    env_file:
+      - ./server/.env
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:4000
+    container_name: inventory_web
+    ports:
+      - "8080:8080"
+    depends_on:
+      - server
+    restart: unless-stopped

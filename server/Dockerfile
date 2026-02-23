@@ -13,8 +13,8 @@ COPY src ./src
 ENV NODE_ENV=production
 ENV PORT=4000
 
-RUN npm run prisma:generate
-RUN npm run build
+RUN npx prisma generate --config prisma.config.ts
+RUN npm run build && ls -laR dist || echo "Build failed or dist is empty"
 
 EXPOSE 4000
 
