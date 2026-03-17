@@ -57,7 +57,7 @@ export default function StoresPage() {
   }
 
   return (
-    <div className="w-full space-y-4">
+    <div className="flex min-h-[calc(100dvh-140px)] flex-col">
       <PageHeader
         title="Stores"
         subtitle="Create and manage stores."
@@ -68,68 +68,70 @@ export default function StoresPage() {
         }
       />
 
-      <Card className="rounded-2xl">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Create store</CardTitle>
-          <Plus className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <FieldErrors fieldErrors={fieldErrors} />
+      <div className="mt-4 flex flex-1 flex-col gap-4">
+        <Card className="w-full rounded-2xl">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-base">Create store</CardTitle>
+            <Plus className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <FieldErrors fieldErrors={fieldErrors} />
 
-          <form onSubmit={onCreate} className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. CBD Branch" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Nairobi" />
-            </div>
+            <form onSubmit={onCreate} className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. CBD Branch" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="location">Location</Label>
+                <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Nairobi" />
+              </div>
 
-            <div className="sm:col-span-2">
-              <Button type="submit" className="rounded-2xl">
-                Create
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+              <div className="sm:col-span-2">
+                <Button type="submit" className="rounded-2xl">
+                  Create
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
 
-      <Separator />
+        <Separator />
 
-      {loading ? (
-        <div className="text-sm text-muted-foreground">Loading…</div>
-      ) : stores.length === 0 ? (
-        <EmptyState
-          title="No stores yet"
-          subtitle="Create your first store to start tracking products and inventory."
-        />
-      ) : (
-        <div className="grid gap-3">
-          {stores.map((s) => (
-            <Card key={s.id} className="rounded-2xl">
-              <CardContent className="flex items-center justify-between gap-3 p-4">
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl bg-accent">
-                    <StoreIcon className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <div className="font-semibold">{s.name}</div>
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <MapPin className="h-3.5 w-3.5" />
-                      {s.location || "—"}
+        {loading ? (
+          <div className="text-sm text-muted-foreground">Loading…</div>
+        ) : stores.length === 0 ? (
+          <EmptyState
+            title="No stores yet"
+            subtitle="Create your first store to start tracking products and inventory."
+          />
+        ) : (
+          <div className="grid gap-3">
+            {stores.map((s) => (
+              <Card key={s.id} className="w-full rounded-2xl">
+                <CardContent className="flex items-center justify-between gap-3 p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl bg-accent">
+                      <StoreIcon className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="font-semibold">{s.name}</div>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <MapPin className="h-3.5 w-3.5" />
+                        {s.location || "—"}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <Button asChild variant="outline" className="rounded-2xl">
-                  <Link to={`/stores/${s.id}`}>Open</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                  <Button asChild variant="outline" className="rounded-2xl">
+                    <Link to={`/stores/${s.id}`}>Open</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

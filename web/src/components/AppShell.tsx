@@ -33,11 +33,13 @@ function SideNav({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
+const HEADER_HEIGHT = 64;
+
 export default function AppShell() {
   return (
-    <div className="min-h-dvh bg-background">
-      <div className="w-full px-6 py-4">
-        <header className="flex items-center justify-between gap-4">
+    <div className="flex min-h-screen w-full flex-col bg-background">
+      <header className="h-16 w-full border-b bg-card px-6 py-4 shadow-sm sticky top-0 z-10">
+        <div className="flex h-full items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
               <Package className="h-5 w-5" />
@@ -62,20 +64,24 @@ export default function AppShell() {
               </SheetContent>
             </Sheet>
           </div>
-        </header>
-
-        <div className="mt-6 grid gap-6 md:grid-cols-[260px_1fr]">
-          <aside className="hidden md:block">
-            <div className="rounded-2xl border bg-card p-3 shadow-sm">
-              <div className="mb-3 text-xs font-semibold text-muted-foreground">Navigation</div>
-              <SideNav />
-            </div>
-          </aside>
-
-          <main className="min-w-0 rounded-2xl border bg-card p-4 shadow-sm ">
-            <Outlet />
-          </main>
         </div>
+      </header>
+
+      <div className="flex flex-1">
+        <aside
+          className="hidden w-70 border-r rounded-lg bg-card p-4 shadow-sm md:block sticky self-start mt-4 ml-2"
+          // style={{ top: HEADER_HEIGHT, height: `calc(100vh - ${HEADER_HEIGHT}px)` }}
+          style={{ top: HEADER_HEIGHT, height: "fit-content" }}
+        >
+          <div className="mb-3 text-xs font-semibold text-muted-foreground">Navigation</div>
+          <SideNav />
+        </aside>
+
+        <main className="flex-1 w-full overflow-auto">
+          <div className="w-full px-6 py-4">
+            <Outlet />
+          </div>
+        </main>
       </div>
     </div>
   );

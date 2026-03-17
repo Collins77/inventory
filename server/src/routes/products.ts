@@ -1,97 +1,98 @@
 import { Router } from "express";
-import { prisma } from "../db/prisma.js";
 import { paginationSchema, uuidSchema } from "../validators/common.js";
-import { productsFilterSchema, updateProductSchema } from "../validators/products.js";
+import { productsFilterSchema, updateProductSchema, createProductSchema } from "../validators/products.js";
+import { asyncHandler } from "../types/express.js";
+import type {
+  CreateProductRequest,
+  UpdateProductRequest,
+  ProductsFilter,
+  ProductResponse,
+  PaginatedProductsResponse
+} from "../types/api.js";
+import {
+  getProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct
+} from "../services/products.js";
+import { getStoreById, createStoreProduct } from "../services/stores.js";
 
 export const productsRouter = Router();
 
-// GET /products?category=&minPrice=&maxPrice=&minStock=&maxStock=&page=&limit=
-productsRouter.get("/", async (req, res, next) => {
-  try {
-    const pg = paginationSchema.safeParse(req.query);
-    if (!pg.success) return res.status(400).json({ error: "Invalid pagination" });
-
-    const filters = productsFilterSchema.safeParse(req.query);
-    if (!filters.success) return res.status(400).json({ error: "Invalid filters" });
-
-    const { page, limit } = pg.data;
-    const skip = (page - 1) * limit;
-
-    const { category, minPrice, maxPrice, minStock, maxStock } = filters.data;
-
-    const where: any = {};
-
-    if (category) where.category = category;
-
-    if (minPrice !== undefined || maxPrice !== undefined) {
-      where.price = {
-        ...(minPrice !== undefined ? { gte: minPrice } : {}),
-        ...(maxPrice !== undefined ? { lte: maxPrice } : {})
-      };
-    }
-
-    if (minStock !== undefined || maxStock !== undefined) {
-      where.quantity = {
-        ...(minStock !== undefined ? { gte: minStock } : {}),
-        ...(maxStock !== undefined ? { lte: maxStock } : {})
-      };
-    }
-
-    const [total, products] = await Promise.all([
-      prisma.product.count({ where }),
-      prisma.product.findMany({
-        where,
-        include: { store: { select: { id: true, name: true } } },
-        orderBy: { createdAt: "desc" },
-        skip,
-        take: limit
-      })
-    ]);
-
-    res.json({
-      data: products,
-      meta: { page, limit, total, totalPages: Math.ceil(total / limit) }
-    });
-  } catch (e) {
-    next(e);
+// POST /products
+productsRouter.post("/", asyncHandler(async (req, res) => {
+  const parsed = createProductSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: parsed.error.flatten() });
   }
-});
+
+  const { storeId, ...productData } = parsed.data;
+
+  const store = await getStoreById(storeId);
+  if (!store) {
+    return res.status(404).json({ error: "Store not found" });
+  }
+
+  const product = await createStoreProduct(storeId, productData);
+
+  res.status(201).json({ data: product });
+}));
+
+// GET /products?category=&minPrice=&maxPrice=&minStock=&maxStock=&page=&limit=
+productsRouter.get("/", asyncHandler(async (req, res) => {
+  const pg = paginationSchema.safeParse(req.query);
+  if (!pg.success) {
+    return res.status(400).json({ error: "Invalid pagination" });
+  }
+
+  const filters = productsFilterSchema.safeParse(req.query);
+  if (!filters.success) {
+    return res.status(400).json({ error: "Invalid filters" });
+  }
+
+  const { page, limit } = pg.data;
+  const { products, total } = await getProducts(filters.data, page, limit);
+
+  res.json({
+    data: products,
+    meta: { page, limit, total, totalPages: Math.ceil(total / limit) }
+  });
+}));
 
 // PATCH /products/:id
-productsRouter.patch("/:id", async (req, res, next) => {
-  try {
-    const id = uuidSchema.safeParse(req.params.id);
-    if (!id.success) return res.status(400).json({ error: "Invalid product id" });
-
-    const parsed = updateProductSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
-
-    const exists = await prisma.product.findUnique({ where: { id: id.data } });
-    if (!exists) return res.status(404).json({ error: "Product not found" });
-
-    const updated = await prisma.product.update({
-      where: { id: id.data },
-      data: parsed.data
-    });
-
-    res.json({ data: updated });
-  } catch (e) {
-    next(e);
+productsRouter.patch("/:id", asyncHandler(async (req, res) => {
+  const id = uuidSchema.safeParse(req.params.id);
+  if (!id.success) {
+    return res.status(400).json({ error: "Invalid product id" });
   }
-});
+
+  const parsed = updateProductSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: parsed.error.flatten() });
+  }
+
+  const exists = await getProductById(id.data);
+  if (!exists) {
+    return res.status(404).json({ error: "Product not found" });
+  }
+
+  const updated = await updateProduct(id.data, parsed.data);
+
+  res.json({ data: updated });
+}));
 
 // DELETE /products/:id
-productsRouter.delete("/:id", async (req, res, next) => {
-  try {
-    const id = uuidSchema.safeParse(req.params.id);
-    if (!id.success) return res.status(400).json({ error: "Invalid product id" });
-
-    const exists = await prisma.product.findUnique({ where: { id: id.data } });
-    if (!exists) return res.status(404).json({ error: "Product not found" });
-
-    await prisma.product.delete({ where: { id: id.data } });
-    res.status(204).send();
-  } catch (e) {
-    next(e);
+productsRouter.delete("/:id", asyncHandler(async (req, res) => {
+  const id = uuidSchema.safeParse(req.params.id);
+  if (!id.success) {
+    return res.status(400).json({ error: "Invalid product id" });
   }
-});
+
+  const exists = await getProductById(id.data);
+  if (!exists) {
+    return res.status(404).json({ error: "Product not found" });
+  }
+
+  await deleteProduct(id.data);
+  res.status(204).send();
+}));

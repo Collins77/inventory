@@ -73,7 +73,7 @@ export default function ProductsPage() {
   const totalPages = meta?.totalPages ?? 1;
 
   return (
-    <div className="flex min-h-[calc(100dvh-140px)] flex-col">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Products"
         subtitle="Global search and filters."

@@ -107,7 +107,7 @@ export default function DashboardPage() {
       : "Selected store";
 
   return (
-    <div className="flex min-h-[calc(100dvh-140px)] flex-col">
+    <div className="flex flex-col gap-4">
       {/* Top header row */}
       <PageHeader
         title="Dashboard"
@@ -210,11 +210,11 @@ export default function DashboardPage() {
                   Sum of quantities in scope
                 </div>
 
-                {selectedStoreId === "all" && (
+                {/* {selectedStoreId === "all" && (
                   <div className="mt-2 text-xs text-muted-foreground">
                     Tip: choose a store to see stock totals (global stock needs a global metrics endpoint).
                   </div>
-                )}
+                )} */}
               </div>
 
               {selectedStoreId !== "all" ? (

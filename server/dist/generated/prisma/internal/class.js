@@ -51,7 +51,7 @@ const config = {
     "clientVersion": "7.4.1",
     "engineVersion": "55ae170b1ced7fc6ed07a15f110549408c501bb3",
     "activeProvider": "sqlite",
-    "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// generator client {\n//   provider = \"prisma-client\"\n//   output   = \"../generated/prisma\"\n// }\n\n// datasource db {\n//   provider = \"sqlite\"\n// }\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\nmodel Store {\n  id        String   @id @default(uuid())\n  name      String\n  location  String?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  products Product[]\n}\n\nmodel Product {\n  id        String   @id @default(uuid())\n  storeId   String\n  name      String\n  category  String\n  price     Int\n  quantity  Int\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)\n\n  @@index([storeId])\n  @@index([category])\n  @@index([price])\n}\n",
+    "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\nmodel Store {\n  id        String   @id @default(uuid())\n  name      String\n  location  String?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  products Product[]\n}\n\nmodel Product {\n  id        String   @id @default(uuid())\n  storeId   String\n  name      String\n  category  String\n  price     Int\n  quantity  Int\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)\n\n  @@index([storeId])\n  @@index([category])\n  @@index([price])\n}\n",
     "runtimeDataModel": {
         "models": {},
         "enums": {},
@@ -73,9 +73,9 @@ async function decodeBase64AsWasm(wasmBase64) {
     return new WebAssembly.Module(wasmArray);
 }
 config.compilerWasm = {
-    getRuntime: async () => await Promise.resolve().then(() => __importStar(require("@prisma/client/runtime/query_compiler_fast_bg.sqlite.mjs"))),
+    getRuntime: async () => await Promise.resolve().then(() => __importStar(require("@prisma/client/runtime/query_compiler_fast_bg.sqlite.js"))),
     getQueryCompilerWasmModule: async () => {
-        const { wasm } = await Promise.resolve().then(() => __importStar(require("@prisma/client/runtime/query_compiler_fast_bg.sqlite.wasm-base64.mjs")));
+        const { wasm } = await Promise.resolve().then(() => __importStar(require("@prisma/client/runtime/query_compiler_fast_bg.sqlite.wasm-base64.js")));
         return await decodeBase64AsWasm(wasm);
     },
     importName: "./query_compiler_fast_bg.js"

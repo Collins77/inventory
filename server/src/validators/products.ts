@@ -1,13 +1,21 @@
 import { z } from "zod";
 
 export const createProductSchema = z.object({
+  storeId: z.string().uuid(),
   name: z.string().min(1).max(120),
   category: z.string().min(1).max(80),
   price: z.number().int().min(0),
   quantity: z.number().int().min(0)
 });
 
-export const updateProductSchema = createProductSchema.partial();
+export const createStoreProductSchema = z.object({
+  name: z.string().min(1).max(120),
+  category: z.string().min(1).max(80),
+  price: z.number().int().min(0),
+  quantity: z.number().int().min(0)
+});
+
+export const updateProductSchema = createProductSchema.omit({ storeId: true }).partial();
 
 export const productsFilterSchema = z.object({
   category: z.string().min(1).max(80).optional(),
